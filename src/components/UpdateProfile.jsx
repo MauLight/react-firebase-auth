@@ -2,36 +2,45 @@ import { FormControl, InputLabel, Input, FormHelperText, Box, IconButton, Typogr
 import Fingerprint from '@mui/icons-material/Fingerprint';
 import { useAuth } from '../context/AuthContext';
 import { useRef, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function Signup() {
+export default function UpdateProfile() {
 
     const emailRef = useRef();
     const passwordRef = useRef();
     const cpasswordRef = useRef();
-    const { signup } = useAuth();
+    const { currentUser, updateEmail, updatePasword } = useAuth();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
 
-    async function handleSubmit(e) {
+    function handleSubmit(e) {
         e.preventDefault();
 
         if (passwordRef.current.value !== cpasswordRef.current.value) {
             return setError("Passwords do not match.")
         }
-        try {
-            setError("");
-            setLoading(true);
-            await signup(emailRef.current.value, passwordRef.current.value);
-            Navigate("/");
-        }
-        catch(error) {
-            console.log(error)
-            setError("Failed to create an account.")
+
+        const promises = [];
+        setError("");
+        setLoading(true);
+
+        if (emailRef.current.value !== currentUser.email) {
+            promises.push(updateEmail(emailRef.current.value));
         }
 
-        setLoading(false);
+        if (passwordRef.current.value !== currentUser.password) {
+            promises.push(updatePasword(passwordRef.current.value));
+        }
+
+        Promise.all(promises).then(() => {
+            navigate("/")
+        }).catch(() => {
+            setError("Failed to update.")
+        }).finally(() => {
+            setLoading(false)
+        })
     }
 
 
@@ -60,8 +69,8 @@ export default function Signup() {
             {error && <Alert my={5} severity="error">{error}</Alert>}
             <FormControl onSubmit={handleSubmit} sx={{ marginTop: "30px" }}>
                 <InputLabel htmlFor="email">Email address</InputLabel>
-                <Input id="email" aria-describedby="email" variant="standard" inputRef={emailRef} />
-                <FormHelperText id="email">We'll never share your email.</FormHelperText>
+                <Input id="email" aria-describedby="email" variant="standard" inputRef={emailRef} required defaultValue={currentUser.email} />
+                <FormHelperText id="email">Leave blank to keep original.</FormHelperText>
             </FormControl>
             <FormControl sx={{ marginTop: "20px" }}>
                 <InputLabel htmlFor="password">Password</InputLabel>
@@ -77,7 +86,7 @@ export default function Signup() {
                 </IconButton>
             </Box>
             <Box mt={5}>
-                Already have an account? <Link to='/login'>Log in.</Link>
+                <Link to='/'>Cancel.</Link>
             </Box>
         </Box>
     )
