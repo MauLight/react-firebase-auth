@@ -2,7 +2,7 @@ import { FormControl, InputLabel, Input, FormHelperText, Box, IconButton, Typogr
 import Fingerprint from '@mui/icons-material/Fingerprint';
 import { useAuth } from '../context/AuthContext';
 import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 export default function Signup() {
 
@@ -13,17 +13,21 @@ export default function Signup() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+
     async function handleSubmit(e) {
         e.preventDefault();
+
         if (passwordRef.current.value !== cpasswordRef.current.value) {
-            setError("Passwords do not match.")
+            return setError("Passwords do not match.")
         }
         try {
             setError("");
             setLoading(true);
             await signup(emailRef.current.value, passwordRef.current.value);
+            Navigate("/");
         }
-        catch {
+        catch(error) {
+            console.log(error)
             setError("Failed to create an account.")
         }
 
@@ -52,7 +56,7 @@ export default function Signup() {
             <Typography variant="h2" component="h2">
                 SignUp
             </Typography>
-            
+
             {error && <Alert my={5} severity="error">{error}</Alert>}
             <FormControl onSubmit={handleSubmit} sx={{ marginTop: "30px" }}>
                 <InputLabel htmlFor="email">Email address</InputLabel>
@@ -61,14 +65,14 @@ export default function Signup() {
             </FormControl>
             <FormControl sx={{ marginTop: "20px" }}>
                 <InputLabel htmlFor="password">Password</InputLabel>
-                <Input id="password" aria-describedby="password" variant="standard" inputRef={passwordRef} />
+                <Input type='password' id="password" aria-describedby="password" variant="standard" inputRef={passwordRef} />
             </FormControl>
             <FormControl sx={{ marginTop: "20px" }}>
                 <InputLabel htmlFor="cpassword">Confirm password</InputLabel>
-                <Input id="cpassword" aria-describedby="cpassword" variant="standard" inputRef={cpasswordRef} />
+                <Input type='password' id="cpassword" aria-describedby="cpassword" variant="standard" inputRef={cpasswordRef} />
             </FormControl>
             <Box mx="auto" mt={5}>
-                <IconButton type='submit' aria-label="fingerprint" color="primary" sx={{ width: "60px", height: "60px" }} onClick={handleSubmit}>
+                <IconButton disabled={loading} type='submit' aria-label="fingerprint" color="primary" sx={{ width: "60px", height: "60px" }} onClick={handleSubmit}>
                     <Fingerprint sx={{ width: "50px", height: "50px" }} />
                 </IconButton>
             </Box>

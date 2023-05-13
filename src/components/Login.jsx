@@ -2,15 +2,16 @@ import { FormControl, InputLabel, Input, FormHelperText, Box, IconButton, Typogr
 import Fingerprint from '@mui/icons-material/Fingerprint';
 import { useAuth } from '../context/AuthContext';
 import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
     const emailRef = useRef();
     const passwordRef = useRef();
-    const { signup } = useAuth();
+    const { login } = useAuth();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -18,10 +19,12 @@ export default function Login() {
         try {
             setError("");
             setLoading(true);
-            await signup(emailRef.current.value, passwordRef.current.value);
+            await login(emailRef.current.value, passwordRef.current.value);
+            navigate('/');
         }
-        catch {
-            setError("Failed to create an account.")
+        catch (error) {
+            console.log(error)
+            setError("Failed to log in.")
         }
 
         setLoading(false);
@@ -61,7 +64,7 @@ export default function Login() {
                 <Input id="password" aria-describedby="password" variant="standard" inputRef={passwordRef} />
             </FormControl>
             <Box mx="auto" mt={5}>
-                <IconButton type='submit' aria-label="fingerprint" color="primary" sx={{ width: "60px", height: "60px" }} onClick={handleSubmit}>
+                <IconButton disabled={loading} type='submit' aria-label="fingerprint" color="primary" sx={{ width: "60px", height: "60px" }} onClick={handleSubmit}>
                     <Fingerprint sx={{ width: "50px", height: "50px" }} />
                 </IconButton>
             </Box>
