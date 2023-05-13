@@ -63,7 +63,7 @@ export default function UpdateProfile() {
             textAlign="center"
         >
             <Typography variant="h2" component="h2">
-                SignUp.
+                Update Profile.
             </Typography>
 
             {error && <Alert my={5} severity="error">{error}</Alert>}
@@ -75,6 +75,7 @@ export default function UpdateProfile() {
             <FormControl sx={{ marginTop: "20px" }}>
                 <InputLabel htmlFor="password">Password</InputLabel>
                 <Input type='password' id="password" aria-describedby="password" variant="standard" inputRef={passwordRef} />
+                <FormHelperText id="email">Leave blank to keep original.</FormHelperText>
             </FormControl>
             <FormControl sx={{ marginTop: "20px" }}>
                 <InputLabel htmlFor="cpassword">Confirm password</InputLabel>

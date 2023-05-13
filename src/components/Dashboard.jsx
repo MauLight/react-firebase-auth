@@ -37,7 +37,7 @@ export default function Dashboard() {
                         <Typography gutterBottom variant="h5" component="div">
                             Email: {currentUser.email}
                         </Typography>
-                        <Link to={"/update-profle"} >Update Profile</Link>
+                        <Link to={"/update-profile"} >Update Profile</Link>
                     </CardContent>
                     <Button onClick={handleLogout}>Log Out</Button>
                 </CardActionArea>
